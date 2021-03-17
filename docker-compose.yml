@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  database:
+    container_name: dan-database
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: dan_todo
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql:/docker-entrypoint-initdb.d
+
+  server:
+    container_name: nodeapi-server
+    build:
+      context: ./server
+    environment:
+      NODE_ENV: development
+    links:
+      - database:database
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/usr/src/server
+      - /usr/src/server/node_modules
